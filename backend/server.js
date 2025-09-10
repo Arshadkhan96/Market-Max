@@ -13,8 +13,6 @@ const adminRoutes = require("./routes/adminRoute");
 const productAdminRoutes = require("./routes/productAdminRoute");
 const orderAdminRoutes = require("./routes/adminOrderRoute");
 
-
-
 dotenv.config(); // ✅ Load .env variables
 
 const app = express();
@@ -22,7 +20,27 @@ const app = express();
 // ✅ Middleware (CORRECT ORDER)
 app.use(cors());
 app.use(express.json()); // Parses application/json
-app.use(express.urlencoded({ extended: true })); // Parses application/x-www-form-urlencoded
+
+// Custom JSON parser that skips DELETE requests
+app.use((req, res, next) => {
+  if (req.method === 'DELETE') {
+    next();
+  } else {
+    express.json()(req, res, next);
+  }
+});
+
+// URL-encoded parser (only for non-DELETE requests)
+app.use((req, res, next) => {
+  if (req.method === 'DELETE') {
+    next();
+  } else {
+    express.urlencoded({ extended: true })(req, res, next);
+  }
+});
+
+
+
 
 // ✅ Connect MongoDB
 connectDB();

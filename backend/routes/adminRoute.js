@@ -74,25 +74,38 @@ router.put("/:id", protect, admin, async (req, res) => {
 //@desc DELETE a user
 //@access Private/Admin
 
-router.delete("/:id",protect,admin,async(req,res)=>{
-    try {
-        const user = await User.findById(req.params.id)
-        if(user){
-            await user.deleteOne()
-            res.json({message:"User deleted successfully"})
-        }else{
-            res.status(400).josn({message:"User not found"})
-        }
-    } catch (error) {
-        console.error(error)
-        res.status(500).josn({message:"Server Error"})
+//@route DELETE api/admin/users/:id
+//@desc Delete a user
+//@access Private/Admin
+router.delete("/:id", protect, admin, async (req, res) => {
+  try {
+    console.log("DELETE USER REQUEST RECEIVED:");
+    console.log("User ID:", req.params.id);
+    console.log("Authenticated User:", req.user ? req.user._id : "No user");
+    
+    const user = await User.findById(req.params.id);
+    
+    if (user) {
+      console.log("User found:", user._id, user.email);
+      
+      // Prevent admin from deleting themselves
+      if (user._id.toString() === req.user._id.toString()) {
+        console.log("Attempt to delete own account blocked");
+        return res.status(400).json({ message: "Cannot delete your own account" });
+      }
+      
+      await user.deleteOne();
+      console.log("User successfully deleted");
+      res.json({ message: "User removed", userId: user._id });
+    } else {
+      console.log("User not found with ID:", req.params.id);
+      res.status(404).json({ message: "User not found" });
     }
-})
-
-
-
-
-
+  } catch (error) {
+    console.error("DELETE USER ERROR:", error);
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+});
 
 
 module.exports = router;

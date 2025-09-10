@@ -1,20 +1,6 @@
+// adminSlice.js - Fixed version
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-
-// Fetch all users (Admin only)
-export const fetchUsers = createAsyncThunk(
-  "admin/fetchUsers",
-  async (_, { rejectWithValue }) => {
-    try {
-      return await makeAuthorizedRequest('/api/admin/users');
-    } catch (error) {
-      return rejectWithValue({
-        message: error.response?.data?.message || 'Failed to fetch users',
-        status: error.response?.status || 500
-      });
-    }
-  }
-);
 
 // Helper function to handle API requests with token
 const makeAuthorizedRequest = async (url, method = 'GET', data = null) => {
@@ -23,16 +9,34 @@ const makeAuthorizedRequest = async (url, method = 'GET', data = null) => {
   if (!token) {
     throw new Error('No authentication token found. Please log in again.');
   }
+   // Don't include Content-Type for DELETE requests without a body
+  const headers = {
+    'Authorization': `Bearer ${token}`
+  };
+
+  // Only include Content-Type if there's data to send
+  if (method !== 'GET' && method !== 'DELETE' && data) {
+    headers['Content-Type'] = 'application/json';
+  }
 
   const config = {
     method,
     url: `${import.meta.env.VITE_BACKEND_URL}${url}`,
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
-    data
+    headers: headers,
+    // Don't include data for GET and DELETE requests if it's null/undefined
+    ...(data && { data })
   };
+
+
+  // const config = {
+  //   method,
+  //   url: `${import.meta.env.VITE_BACKEND_URL}${url}`,
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //     'Authorization': `Bearer ${token}`
+  //   },
+  //   data
+  // };
 
   try {
     const response = await axios(config);
@@ -48,6 +52,21 @@ const makeAuthorizedRequest = async (url, method = 'GET', data = null) => {
     throw error;
   }
 };
+
+// Fetch all users (Admin only)
+export const fetchUsers = createAsyncThunk(
+  "admin/fetchUsers",
+  async (_, { rejectWithValue }) => {
+    try {
+      return await makeAuthorizedRequest('/api/admin/users');
+    } catch (error) {
+      return rejectWithValue({
+        message: error.response?.data?.message || 'Failed to fetch users',
+        status: error.response?.status || 500
+      });
+    }
+  }
+);
 
 // Add a new user
 export const addUser = createAsyncThunk(
@@ -83,15 +102,18 @@ export const updateUser = createAsyncThunk(
   }
 );
 
-// Delete a user
+// Delete a user - FIXED VERSION
 export const deleteUser = createAsyncThunk(
   "admin/deleteUser",
   async (userId, { rejectWithValue }) => {
     try {
-      return await makeAuthorizedRequest(
+      const response = await makeAuthorizedRequest(
         `/api/admin/users/${userId}`,
         'DELETE'
       );
+      
+      // Return the userId from the response object
+      return response.userId;
     } catch (error) {
       return rejectWithValue({
         message: error.response?.data?.message || 'Failed to delete user',
@@ -108,7 +130,12 @@ const adminSlice = createSlice({
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    // Add a reducer to clear errors
+    clearError: (state) => {
+      state.error = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       // Fetch users
@@ -122,28 +149,57 @@ const adminSlice = createSlice({
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload;
       })
 
       // Add user
+      .addCase(addUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(addUser.fulfilled, (state, action) => {
-        state.users.push(action.payload.user); //add new user to the state
+        state.loading = false;
+        state.users.push(action.payload.user);
+      })
+      .addCase(addUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       })
 
       // Update user
+      .addCase(updateUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(updateUser.fulfilled, (state, action) => {
+        state.loading = false;
         const updatedUser = action.payload;
         const index = state.users.findIndex((user) => user._id === updatedUser._id);
         if (index !== -1) {
           state.users[index] = updatedUser;
         }
       })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
 
       // Delete user
+      .addCase(deleteUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(deleteUser.fulfilled, (state, action) => {
+        state.loading = false;
+        // Filter out the deleted user using the userId returned from the thunk
         state.users = state.users.filter((user) => user._id !== action.payload);
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
 
+export const { clearError } = adminSlice.actions;
 export default adminSlice.reducer;

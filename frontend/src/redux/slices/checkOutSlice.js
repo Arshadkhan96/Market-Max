@@ -1,4 +1,3 @@
-
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -7,12 +6,14 @@ export const createCheckout = createAsyncThunk(
   "checkout/createCheckout",
   async (checkoutData, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem("userToken");
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/checkouts`, // ✅ plural
+        `${import.meta.env.VITE_BACKEND_URL}/api/checkout`,
         checkoutData,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+            Authorization: token ? `Bearer ${token}` : "",
+            "Content-Type": "application/json",
           },
         }
       );

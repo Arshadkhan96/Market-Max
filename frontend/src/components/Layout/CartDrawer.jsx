@@ -1,5 +1,3 @@
-
-
 import { IoMdClose } from 'react-icons/io';
 import CartContents from '../Cart/CartContents';
 import { useNavigate } from 'react-router-dom';
