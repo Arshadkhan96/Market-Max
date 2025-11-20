@@ -40,8 +40,6 @@ app.use((req, res, next) => {
 });
 
 
-
-
 // ✅ Connect MongoDB
 connectDB();
 
