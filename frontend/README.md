@@ -7,7 +7,7 @@ It showcases product listings, filters, category pages, and a smooth shopping-st
 👉 Visit Now: https://market-max.netlify.app/
 
 ## 🖼️ Project Preview
-![market-max](src/assets//config.png)
+![market-max](src/assets/config.png)
 
 ✨ Features
 
