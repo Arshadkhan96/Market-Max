@@ -79,16 +79,7 @@ const adminOrderSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      // .addCase(fetchAllOrders.fulfilled, (state, action) => {
-      //   state.loading = false;
-      //   state.orders = action.payload;
-      //   state.totalOrders = action.payload.length;
-      //   state.totalSales = action.payload.reduce(
-      //     (sum, order) => sum + (order.totalAmount || 0),
-      //     0
-      //   );
-      // })
-      .addCase(fetchAllOrders.fulfilled, (state, action) => {
+    .addCase(fetchAllOrders.fulfilled, (state, action) => {
   state.loading = false;
   state.orders = action.payload;
   state.totalOrders = action.payload.length;
