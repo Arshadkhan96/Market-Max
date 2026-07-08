@@ -32,3 +32,16 @@ It showcases product listings, filters, category pages, and a smooth shopping-st
 
 🎨 Clean modern design
 
+
+## Tech Stack
+
+- React
+- Node.js
+- Express
+- MongoDB Atlas
+- Docker
+- GitHub Actions (CI/CD)
+
+## Run with Docker
+
+docker compose up --build
