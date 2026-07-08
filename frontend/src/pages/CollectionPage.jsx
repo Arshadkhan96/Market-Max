@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { FaFilter, FaSpinner, FaExclamationTriangle } from "react-icons/fa";
-import FilterSideBar from '../components/Products/FilterSideBar';
+import FilterSidebar from '../components/Products/FilterSidebar';
 import SortOption from '../components/Products/SortOption';
 import ProductGrid from '../components/Products/ProductGrid';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -147,7 +147,7 @@ const CollectionPage = () => {
                     shadow-lg lg:shadow-none
                 `}
             >
-                <FilterSideBar onClose={() => setIsSidebarOpen(false)} />
+                <FilterSidebar onClose={() => setIsSidebarOpen(false)} />
             </div>
 
             {/* Main Content */}
