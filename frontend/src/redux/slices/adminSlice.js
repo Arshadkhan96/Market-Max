@@ -28,17 +28,7 @@ const makeAuthorizedRequest = async (url, method = 'GET', data = null) => {
   };
 
 
-  // const config = {
-  //   method,
-  //   url: `${import.meta.env.VITE_BACKEND_URL}${url}`,
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //     'Authorization': `Bearer ${token}`
-  //   },
-  //   data
-  // };
-
-  try {
+   try {
     const response = await axios(config);
     return response.data;
   } catch (error) {

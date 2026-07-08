@@ -1,0 +1,4 @@
+/*    /index.html   200
+
+# For Netlify SPA compatibility
+# This ensures all routes serve index.html for React Router
