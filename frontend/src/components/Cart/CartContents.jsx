@@ -51,8 +51,11 @@ const CartContents = ({ cart, userId, guestId }) => {
                     className='flex items-start justify-between py-4 border-b'>
 
                     <div className='flex items-start'>
-                        <img src={product.image} alt={product.name}
-                            className='w-16 h-20 sm:h-24 sm:w-20 object-cover mr-4 rounded' />
+                        <img
+                            src={typeof product.image === 'string' ? product.image : product.image?.url || ''}
+                            alt={product.name}
+                            className='w-16 h-20 sm:h-24 sm:w-20 object-cover mr-4 rounded'
+                        />
                         <div>
                             <h3>{product.name}</h3>
                             <p className='text-sm text-gray-500'>

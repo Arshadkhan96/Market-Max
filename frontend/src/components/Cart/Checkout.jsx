@@ -172,7 +172,11 @@ const Checkout = () => {
           {cart.products.map((product, index) => (
             <div key={index} className="flex items-start justify-between py-2 border-b">
               <div className="flex items-start">
-                <img src={product.image} alt={product.name} className="w-20 h-24 object-cover mr-4" />
+                <img
+                  src={typeof product.image === 'string' ? product.image : product.image?.url || ''}
+                  alt={product.name}
+                  className="w-20 h-24 object-cover mr-4"
+                />
                 <div>
                   <h3 className="text-md">{product.name}</h3>
                   <p className="text-gray-500">Size: {product.size || "N/A"}</p>

@@ -156,7 +156,9 @@ router.post("/", async (req, res) => {
     if (!productDoc) return res.status(404).json({ message: "Product not found" });
 
     const price = Number(productDoc.price) || 0;
-    const image = productDoc.images?.[0] || "";
+    // Ensure we store a plain string URL for the cart item image
+    const firstImage = productDoc.images?.[0];
+    const image = typeof firstImage === 'string' ? firstImage : firstImage?.url || "";
     const name = productDoc.name || "";
 
     // Convert both IDs to strings for comparison
