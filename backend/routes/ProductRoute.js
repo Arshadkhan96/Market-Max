@@ -35,7 +35,6 @@ router.post("/", protect, admin, async (req, res) => {
       weight,
       sku
     } = req.body;
-
     // Validate required fields
     if (!name || !description || !price || !countInstock || !category || !sizes || !colors || !collections || !sku) {
       return res.status(400).json({ 
@@ -64,7 +63,8 @@ router.post("/", protect, admin, async (req, res) => {
       weight: weight || null,
       sku,
       user: req.user._id
-    });
+    }); 
+    
 
     const createdProduct = await newProduct.save();
     res.status(201).json(createdProduct);

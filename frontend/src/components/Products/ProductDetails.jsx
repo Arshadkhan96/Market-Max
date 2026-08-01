@@ -43,11 +43,18 @@ const ProductDetails = ({ productId }) => {
     dispatch(fetchSimilarProducts(productFetchId));
   }, [dispatch, productFetchId]);
 
+  const fallbackProductImage =
+    'https://via.placeholder.com/800x1000?text=No+Image+Available';
+
   useEffect(() => {
-    if (selectedProduct?.images?.length > 0) {
-      setMainImage(selectedProduct.images[0].url);
+    if (Array.isArray(selectedProduct?.images) && selectedProduct.images.length > 0) {
+      const firstImage = typeof selectedProduct.images[0] === 'string'
+        ? selectedProduct.images[0]
+        : selectedProduct.images[0]?.url || fallbackProductImage;
+
+      setMainImage(firstImage);
     } else {
-      setMainImage("");
+      setMainImage(fallbackProductImage);
     }
   }, [selectedProduct]);
 
@@ -99,17 +106,21 @@ const ProductDetails = ({ productId }) => {
             <div className="flex gap-4">
               {/* Thumbnails vertically */}
               <div className="flex flex-col gap-3">
-                {selectedProduct.images?.map((img, idx) => (
-                  <img
-                    key={idx}
-                    src={img.url}
-                    alt={`thumbnail-${idx}`}
-                    onClick={() => setMainImage(img.url)}
-                    className={`w-20 h-20 object-cover cursor-pointer rounded-md border ${
-                      mainImage === img.url ? "border-black" : "border-gray-300"
-                    }`}
-                  />
-                ))}
+                {(Array.isArray(selectedProduct.images) ? selectedProduct.images : []).map((img, idx) => {
+                  const imageUrl = typeof img === 'string' ? img : img?.url || fallbackProductImage;
+
+                  return (
+                    <img
+                      key={idx}
+                      src={imageUrl}
+                      alt={`thumbnail-${idx}`}
+                      onClick={() => setMainImage(imageUrl)}
+                      className={`w-20 h-20 object-cover cursor-pointer rounded-md border ${
+                        mainImage === imageUrl ? "border-black" : "border-gray-300"
+                      }`}
+                    />
+                  );
+                })}
               </div>
 
               {/* Main Image */}
@@ -117,8 +128,11 @@ const ProductDetails = ({ productId }) => {
                 <img
                   src={
                     mainImage ||
-                    selectedProduct.images?.[0]?.url ||
-                    "https://via.placeholder.com/500"
+                    (Array.isArray(selectedProduct.images) && selectedProduct.images.length > 0
+                      ? typeof selectedProduct.images[0] === 'string'
+                        ? selectedProduct.images[0]
+                        : selectedProduct.images[0]?.url || fallbackProductImage
+                      : fallbackProductImage)
                   }
                   alt={selectedProduct.name}
                   className="w-full h-[450px] object-cover rounded-lg border"

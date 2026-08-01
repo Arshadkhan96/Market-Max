@@ -47,6 +47,7 @@ const CartContents = ({ cart, userId, guestId }) => {
     return (
         <div>
             {cart.products.map((product, index) => (
+                    <> {console.log("Cart Product:", product)} 
                 <div key={index}
                     className='flex items-start justify-between py-4 border-b'>
 
@@ -107,6 +108,8 @@ const CartContents = ({ cart, userId, guestId }) => {
                         </button>
                     </div>
                 </div>
+                     </>
+
             ))}
         </div>
     )

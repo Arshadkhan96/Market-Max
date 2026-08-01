@@ -3,6 +3,22 @@ import { Link } from 'react-router-dom'
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'
 import axios from 'axios'
 
+const fallbackProductImage =
+  'https://via.placeholder.com/800x1000?text=No+Image+Available'
+
+const getProductImageUrl = (product) => {
+  const firstImage = Array.isArray(product?.images) ? product.images[0] : null
+
+  if (!firstImage) return fallbackProductImage
+  if (typeof firstImage === 'string') return firstImage
+  return firstImage.url || fallbackProductImage
+}
+
+const getProductImageAlt = (product) => {
+  const firstImage = Array.isArray(product?.images) ? product.images[0] : null
+  return firstImage?.altText || product?.name || 'Product image'
+}
+
 const NewArrivals = () => {
   const scrollRef = useRef(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
@@ -42,7 +58,6 @@ useEffect(() => {
 
   fetchNewArrivals();
 }, []);
-
 
 
 
@@ -137,12 +152,12 @@ useEffect(() => {
       >
         {newArrivals.map((product) => (
           <div
-            key={product._id}
+            key={product._id || product.name}
             className="min-w-[100%] sm:min-w-[50%] lg:min-w-[30%] relative transform transition-transform hover:scale-105 duration-300 shadow-md"
           >
             <img
-              src={product.images[0]?.url}
-              alt={product.images[0].altText || product.name}
+              src={getProductImageUrl(product)}
+              alt={getProductImageAlt(product)}
               className="w-full h-[500px] object-cover rounded-lg"
             />
             <div className="absolute bottom-0 left-0 right-0 bg-opacity-50 backdrop-blur-md text-white p-4 rounded-b-lg">

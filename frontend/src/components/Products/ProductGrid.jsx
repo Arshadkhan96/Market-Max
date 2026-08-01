@@ -1,6 +1,22 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+const fallbackProductImage =
+  'https://via.placeholder.com/800x1000?text=No+Image+Available';
+
+const getProductImageUrl = (product) => {
+  const firstImage = Array.isArray(product?.images) ? product.images[0] : null;
+
+  if (!firstImage) return fallbackProductImage;
+  if (typeof firstImage === 'string') return firstImage;
+  return firstImage.url || fallbackProductImage;
+};
+
+const getProductImageAlt = (product) => {
+  const firstImage = Array.isArray(product?.images) ? product.images[0] : null;
+  return firstImage?.altText || product?.name || 'Product image';
+};
+
 const ProductGrid = ({ products,loading,error})=>{
 
   if(loading){
@@ -14,13 +30,13 @@ const ProductGrid = ({ products,loading,error})=>{
     <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7'>
       {products.map((product, index) => (
 
-        <Link key={index} to={`/product/${product._id}`} className='block'>
+        <Link key={product?._id || `${product?.name}-${index}`} to={`/product/${product._id}`} className='block'>
           <div className='bg-white p-4 rounded-lg shadow-md'>
             <div className='w-full h-96 mb-4'>
 
               <img
-                src={product.images[0].url}
-                alt={product.images[0].altText || product.name}
+                src={getProductImageUrl(product)}
+                alt={getProductImageAlt(product)}
                 className='w-full h-full object-cover rounded-lg'
               />
             </div>
