@@ -18,8 +18,11 @@ export const fetchAdminProduct = createAsyncThunk("adminProduct/fetchProducts", 
 
 // Async function to create a new product
 export const createProduct = createAsyncThunk("adminProducts/createProduct", async (productData) => {
-  const response = await axios.post(`${API_URL}/api/admin/products`, productData, {
-    headers: getAuthHeader(),
+  const response = await axios.post(`${API_URL}/api/products`, productData, {
+    headers: {
+      ...getAuthHeader(),
+      "Content-Type": "application/json",
+    },
   });
   return response.data;
 });

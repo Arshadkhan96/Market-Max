@@ -15,7 +15,7 @@ const EditProductPage = () => {
     name: "",
     description: "",
     price: 0,
-    countInStock: 0,
+    countInstock: 0,
     sku: "",
     category: "",
     brand: "",
@@ -43,7 +43,7 @@ const EditProductPage = () => {
         name: selectedProduct.name || "",
         description: selectedProduct.description || "",
         price: selectedProduct.price ?? 0,
-        countInStock: selectedProduct.countInStock ?? 0,
+        countInstock: selectedProduct.countInstock ?? selectedProduct.countInStock ?? 0,
         sku: selectedProduct.sku || "",
         category: selectedProduct.category || "",
         brand: selectedProduct.brand || "",
@@ -145,8 +145,8 @@ const EditProductPage = () => {
           <label className="block font-semibold mb-2">Count in Stock</label>
           <input
             type="number"
-            name="countInStock"
-            value={productData.countInStock ?? 0}
+            name="countInstock"
+            value={productData.countInstock ?? 0}
             onChange={handleChange}
             className='w-full border border-gray-300 rounded-md p-2'
           />
